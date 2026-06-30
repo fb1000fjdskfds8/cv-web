@@ -1,4 +1,9 @@
+import { useState } from 'react'
 import logo_predicfy from '../assets/logo_predicfy.png'
+import h2h_predicfy from '../assets/h2h_predicfy.png'
+import statistics_predicfy from '../assets/statistics_predicfy.png'
+import notification_predicfy from '../assets/notification_predicfy.webp'
+import lineups2_predicfy from '../assets/lineups2_predicfy.png'
 
 const projects = [
     {
@@ -11,6 +16,7 @@ const projects = [
         icon: logo_predicfy,
         isImage: true,
         github: 'https://github.com/fb1000fjdskfds8',
+        screenshots: [h2h_predicfy, statistics_predicfy, notification_predicfy, lineups2_predicfy],
     },
     {
         name: 'Robot de facturas',
@@ -35,6 +41,9 @@ const projects = [
 ]
 
 export default function Projects() {
+    const [expanded, setExpanded] = useState(null)
+    const [lightbox, setLightbox] = useState(null)
+
     return (
         <section id="projects">
             <div className="container">
@@ -112,11 +121,60 @@ export default function Projects() {
                                         }}>{t}</span>
                                     ))}
                                 </div>
+
+                                {/* Botón Ver capturas */}
+                                {p.screenshots && (
+                                    <>
+                                        <button
+                                            onClick={() => setExpanded(expanded === i ? null : i)}
+                                            style={{
+                                                marginTop: 14, fontSize: 12, color: 'var(--blue-mid)',
+                                                background: 'none', border: 'none', cursor: 'pointer',
+                                                padding: 0, fontWeight: 500,
+                                                display: 'flex', alignItems: 'center', gap: 4,
+                                            }}
+                                        >
+                                            {expanded === i ? 'Ocultar capturas ▴' : 'Ver capturas ▾'}
+                                        </button>
+
+                                        {expanded === i && (
+                                            <div style={{ display: 'flex', gap: 10, marginTop: 12, flexWrap: 'wrap' }}>
+                                                {p.screenshots.map((src, idx) => (
+                                                    <img
+                                                        key={idx}
+                                                        src={src}
+                                                        alt={`${p.name} captura ${idx + 1}`}
+                                                        onClick={() => setLightbox(src)}
+                                                        style={{
+                                                            height: 180, borderRadius: 8,
+                                                            border: '0.5px solid var(--gray-border)',
+                                                            cursor: 'zoom-in',
+                                                        }}
+                                                    />
+                                                ))}
+                                            </div>
+                                        )}
+                                    </>
+                                )}
                             </div>
                         </div>
                     ))}
                 </div>
             </div>
+
+            {/* Lightbox */}
+            {lightbox && (
+                <div
+                    onClick={() => setLightbox(null)}
+                    style={{
+                        position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        zIndex: 999, cursor: 'zoom-out', padding: 24,
+                    }}
+                >
+                    <img src={lightbox} alt="captura ampliada" style={{ maxWidth: '90%', maxHeight: '90%', borderRadius: 8 }} />
+                </div>
+            )}
         </section>
     )
 }
